@@ -1,11 +1,15 @@
 class Piece
-  attr_reader :color
-  
+  attr_reader :color, :symbol
+  attr_accessor :pos
+
   def initialize(color, pos, symbol)
     @color = color
     @pos = pos
     @symbol = symbol
     @board = Array.new(8) { Array.new(8) { nil } }
+  end
+
+  def inspect
   end
 
   def update_board(board)

@@ -6,21 +6,21 @@ class Pawn < Piece
     possible_moves = []
 
     possible_move = [@pos[0].send(direction, 1), @pos[1]]
-    unless end_of_board?(possible_move) || @board[possible_move[0]][possible_move[1]]
+    unless end_of_board?(possible_move) || @board[possible_move]
       possible_moves << possible_move
     end
 
     if (@board[1].include?(self) && @color == :white) ||
       (@board[6].include?(self) && @color == :black)
       possible_move =[@pos[0].send(direction, 2), @pos[1]]
-      unless end_of_board?(possible_move) || @board[possible_move[0]][possible_move[1]]
+      unless end_of_board?(possible_move) || @board[possible_move]
         possible_moves << possible_move
       end
     end
 
     attacking_moves.each do |attacking_move|
       possible_move = attacking_move
-      if @board[possible_move[0]][possible_move[1]] && @board[possible_move].color != @color
+      if @board[possible_move] && @board[possible_move].color != @color
         possible_moves << possible_move
       end
     end
