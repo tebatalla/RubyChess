@@ -125,42 +125,42 @@ class Board
 
   def initialize_pawns
     @board[1].each_index do |i|
-      @board[1][i] = Pawn.new(:white, [1,i], "\u2659")
+      @board[1][i] = Pawn.new(:black, [1,i], "\u265F")
     end
     @board[6].each_index do |i|
-      @board[6][i] = Pawn.new(:black, [6,i], "\u265F")
+      @board[6][i] = Pawn.new(:white, [6,i], "\u2659")
     end
   end
 
   def initialize_rooks
-    @board[0][0] = Rook.new(:white, [0,0], "\u2656")
-    @board[0][7] = Rook.new(:white, [0,7], "\u2656")
-    @board[7][0] = Rook.new(:black, [7,0], "\u265C")
-    @board[7][7] = Rook.new(:black, [7,7], "\u265C")
+    @board[0][0] = Rook.new(:black, [0,0], "\u265C")
+    @board[0][7] = Rook.new(:black, [0,7], "\u265C")
+    @board[7][0] = Rook.new(:white, [7,0], "\u2656")
+    @board[7][7] = Rook.new(:white, [7,7], "\u2656")
   end
 
   def initialize_bishops
-    @board[0][2] = Bishop.new(:white, [0,2], "\u2657")
-    @board[0][5] = Bishop.new(:white, [0,5], "\u2657")
-    @board[7][2] = Bishop.new(:black, [7,2], "\u265D")
-    @board[7][5] = Bishop.new(:black, [7,5], "\u265D")
+    @board[0][2] = Bishop.new(:black, [0,2], "\u265D")
+    @board[0][5] = Bishop.new(:black, [0,5], "\u265D")
+    @board[7][2] = Bishop.new(:white, [7,2], "\u2657")
+    @board[7][5] = Bishop.new(:white, [7,5], "\u2657")
   end
 
   def initialize_knights
-    @board[0][1] = Knight.new(:white, [0,1], "\u2658")
-    @board[0][6] = Knight.new(:white, [0,6], "\u2658")
-    @board[7][1] = Knight.new(:black, [7,1], "\u265E")
-    @board[7][6] = Knight.new(:black, [7,6], "\u265E")
+    @board[0][1] = Knight.new(:black, [0,1], "\u265E")
+    @board[0][6] = Knight.new(:black, [0,6], "\u265E")
+    @board[7][1] = Knight.new(:white, [7,1], "\u2658")
+    @board[7][6] = Knight.new(:white, [7,6], "\u2658")
   end
 
   def initialize_kings
-    @board[0][4] = King.new(:white, [0,4], "\u2654")
-    @board[7][3] = King.new(:black, [7,3], "\u265A")
+    @board[0][4] = King.new(:black, [0,4], "\u265A")
+    @board[7][4] = King.new(:white, [7,4], "\u2654")
   end
 
   def initialize_queens
-    @board[0][3] = Queen.new(:white, [0,3], "\u2655")
-    @board[7][4] = Queen.new(:black, [7,4], "\u265B")
+    @board[0][3] = Queen.new(:black, [0,3], "\u265B")
+    @board[7][3] = Queen.new(:white, [7,3], "\u2655")
   end
 
   def opponent_pieces(color)

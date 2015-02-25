@@ -30,7 +30,7 @@ class Pawn < Piece
   private
 
   def direction
-    @color == :black ? :- : :+
+    @color == :black ? :+ : :-
   end
 
   def attacking_moves
