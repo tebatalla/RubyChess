@@ -76,9 +76,10 @@ class Board
   end
 
   def dup
-    board_dup = []
-    @board.each do |row|
-      board_dup << row.dup
+    board_dup = grid
+    each_piece do |piece|
+      board_dup[piece.pos[0]][piece.pos[1]] =
+      piece.class.new(piece.color, piece.pos.dup, piece.symbol)
     end
     duplicate = Board.new(board_dup)
     duplicate.update_pieces_board
@@ -98,10 +99,8 @@ class Board
   end
 
   def update_pieces_board
-    @board.each do |row|
-      row.each do |piece|
-        piece.update_board(self) if piece
-      end
+    each_piece do |piece|
+      piece.update_board(self)
     end
   end
 
