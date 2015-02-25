@@ -1,14 +1,11 @@
 class Piece
-  attr_reader :color, :symbol
+  attr_reader :color, :symbol, :board
   attr_accessor :pos
 
   def initialize(color, pos, symbol)
     @color = color
     @pos = pos
     @symbol = symbol
-  end
-
-  def inspect
   end
 
   def update_board(board)
@@ -25,12 +22,12 @@ class Piece
 
   def move_into_check?(pos)
     board_dup = @board.dup
-    board_dup.move!(@pos, pos)
+    board_dup.move!(@pos.dup, pos)
     board_dup.in_check?(@color)
   end
 
   def valid_move?(pos)
-    (@board[pos].nil? || @board.opponent_piece?(pos, @color)) &&
-      !end_of_board?(pos)
+    return false if end_of_board?(pos)
+    @board[pos].nil? || @board.opponent_piece?(pos, @color)
   end
 end

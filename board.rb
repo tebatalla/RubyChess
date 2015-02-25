@@ -54,6 +54,22 @@ class Board
     end
   end
 
+  def checkmate?(color)
+    if in_check?(color)
+      pieces = []
+      each_piece do |piece|
+        pieces << piece if piece.color == color
+      end
+      pieces.any? do |piece|
+        piece.moves.any? do |move|
+          !piece.move_into_check?(move)
+        end
+      end
+    else
+      false
+    end
+  end
+
   def display
     @board.each do |row|
       row.each do |spot|
