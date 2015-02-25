@@ -6,3 +6,6 @@ end
 
 class MoveIntoCheck < StandardError
 end
+
+class NotPlayersPiece < StandardError
+end
