@@ -109,9 +109,15 @@ class Board
     end
   end
 
+  def opponent_pieces(color)
+    opp_pieces = []
+    each_piece do |piece|
+      opp_pieces << piece if piece.color != color
+    end
+    opp_pieces
+  end
+
   private
-
-
 
   def initialize_board
     initialize_pawns
@@ -163,15 +169,5 @@ class Board
     @board[7][3] = Queen.new(:white, [7,3], "\u2655")
   end
 
-  def opponent_pieces(color)
-    opp_pieces = []
-    @board.each do |row|
-      row.each do |piece|
-        if piece && piece.color != color
-          opp_pieces << piece
-        end
-      end
-    end
-    opp_pieces
-  end
+
 end
