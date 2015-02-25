@@ -71,12 +71,17 @@ class Board
   end
 
   def display
+    puts "  a b c d e f g h"
+    i = 8
     @board.each do |row|
+      print "#{i} "
       row.each do |spot|
         print spot ? spot.symbol + " " : "_ "
       end
-      print "\n"
+      print "#{i}\n"
+      i -= 1
     end
+    puts "  a b c d e f g h"
     nil
   end
 
