@@ -4,6 +4,7 @@ require_relative 'queen.rb'
 require_relative 'knight.rb'
 require_relative 'bishop.rb'
 require_relative 'rook.rb'
+require_relative 'errors.rb'
 
 require 'byebug'
 
@@ -13,7 +14,31 @@ class Board
     initialize_board
   end
 
-  def inspect
+  def move(start, end_pos)
+    raise NoPieceAtPosition if self[start].nil?
+    piece = self[start]
+    if piece.moves.include?(end_pos)
+      piece.pos = end_pos
+      update_position_piece(end_pos, piece)
+      update_position_piece(start, nil)
+      update_pieces_board
+    else
+      raise OccupiedSpace
+    end
+  end
+
+  def in_check?(color)
+    @board.each_index do |row|
+      row.each_index do |col|
+        if self[row, col].is_a?(King) && self[row, col].color == color
+          king_position = [row, col]
+        end
+      end
+    end
+    opponent_pieces(color).any? do |piece|
+      debugger
+      piece.moves.include?(king_position)
+    end
   end
 
   def display
@@ -27,10 +52,30 @@ class Board
   end
 
   def [](pos)
-    @board[pos[0]][pos[1]]
+    row, col = pos
+    @board[row][col]
+  end
+
+  def update_position_piece(pos, piece)
+    @board[pos[0]][pos[1]] = piece
+  end
+
+  def inspect
+  end
+
+  def row(i)
+    @board[i]
   end
 
   private
+
+  def update_pieces_board
+    @board.each do |row|
+      row.each do |piece|
+        piece.update_board(self) if piece
+      end
+    end
+  end
 
   def initialize_board
     initialize_pawns
@@ -39,6 +84,7 @@ class Board
     initialize_knights
     initialize_kings
     initialize_queens
+    update_pieces_board
   end
 
   def initialize_pawns
@@ -81,4 +127,15 @@ class Board
     @board[7][4] = Queen.new(:black, [7,4], "\u265B")
   end
 
+  def opponent_pieces(color)
+    opp_pieces = []
+    @board.each do |row|
+      row.each do |piece|
+        if piece && piece.color != color
+          opp_pieces << piece
+        end
+      end
+    end
+    opp_pieces
+  end
 end

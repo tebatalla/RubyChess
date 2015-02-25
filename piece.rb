@@ -6,7 +6,6 @@ class Piece
     @color = color
     @pos = pos
     @symbol = symbol
-    @board = Array.new(8) { Array.new(8) { nil } }
   end
 
   def inspect

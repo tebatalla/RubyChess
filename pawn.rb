@@ -10,8 +10,8 @@ class Pawn < Piece
       possible_moves << possible_move
     end
 
-    if (@board[1].include?(self) && @color == :white) ||
-      (@board[6].include?(self) && @color == :black)
+    if (@board.row(1).include?(self) && @color == :white) ||
+      (@board.row(6).include?(self) && @color == :black)
       possible_move =[@pos[0].send(direction, 2), @pos[1]]
       unless end_of_board?(possible_move) || @board[possible_move]
         possible_moves << possible_move
