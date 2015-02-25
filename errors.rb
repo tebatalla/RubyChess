@@ -3,3 +3,6 @@ end
 
 class OccupiedSpace < StandardError
 end
+
+class MoveIntoCheck < StandardError
+end
