@@ -60,7 +60,7 @@ class Board
       each_piece do |piece|
         pieces << piece if piece.color == color
       end
-      pieces.any? do |piece|
+      pieces.all? do |piece|
         piece.moves.all? do |move|
           piece.move_into_check?(move)
         end
