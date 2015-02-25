@@ -36,12 +36,17 @@ class Board
     end
   end
 
+  def each_piece(&prc)
+    @board.flatten.compact.each do |piece|
+      prc.call(piece)
+    end
+  end
+
   def in_check?(color)
-    @board.each_index do |row|
-      row.each_index do |col|
-        if self[row, col].is_a?(King) && self[row, col].color == color
-          king_position = [row, col]
-        end
+    king_position = []
+    each_piece do |piece|
+      if piece.is_a?(King) && piece.color == color
+        king_position = piece.pos
       end
     end
     opponent_pieces(color).any? do |piece|
