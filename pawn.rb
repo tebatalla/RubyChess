@@ -20,7 +20,7 @@ class Pawn < Piece
 
     attacking_moves.each do |attacking_move|
       possible_move = attacking_move
-      if @board[possible_move] && @board[possible_move].color != @color
+      if @board[possible_move] && @board.opponent_piece?(possible_move, @color)
         possible_moves << possible_move
       end
     end

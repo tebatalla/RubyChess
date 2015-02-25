@@ -9,15 +9,24 @@ require_relative 'errors.rb'
 require 'byebug'
 
 class Board
-  def initialize
-    @board = Array.new(8) { Array.new(8) { nil } }
-    initialize_board
+  def initialize(board = nil)
+    if board.nil?
+      @board = grid
+      initialize_board
+    else
+      @board = board
+    end
+  end
+
+  def grid
+    Array.new(8) { Array.new(8) { nil } }
   end
 
   def move(start, end_pos)
     raise NoPieceAtPosition if self[start].nil?
     piece = self[start]
     if piece.moves.include?(end_pos)
+      raise MoveIntoCheck if piece.move_into_check?(end_pos)
       piece.pos = end_pos
       update_position_piece(end_pos, piece)
       update_position_piece(start, nil)
@@ -36,7 +45,6 @@ class Board
       end
     end
     opponent_pieces(color).any? do |piece|
-      debugger
       piece.moves.include?(king_position)
     end
   end
@@ -67,7 +75,27 @@ class Board
     @board[i]
   end
 
-  private
+  def dup
+    board_dup = []
+    @board.each do |row|
+      board_dup << row.dup
+    end
+    duplicate = Board.new(board_dup)
+    duplicate.update_pieces_board
+    duplicate
+  end
+
+  def move!(start, end_pos)
+    piece = self[start]
+    piece.pos = end_pos
+    update_position_piece(end_pos, piece)
+    update_position_piece(start, nil)
+    update_pieces_board
+  end
+
+  def opponent_piece?(pos, color)
+    self[pos].color != color
+  end
 
   def update_pieces_board
     @board.each do |row|
@@ -76,6 +104,10 @@ class Board
       end
     end
   end
+
+  private
+
+
 
   def initialize_board
     initialize_pawns
