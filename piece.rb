@@ -1,14 +1,13 @@
-class Piece
-  attr_reader :color, :symbol, :board
-  attr_accessor :pos
+require 'colorize'
 
-  def initialize(color, pos, symbol)
+class Piece
+  attr_reader :color, :symbol
+  attr_accessor :pos, :board
+
+  def initialize(color, pos, symbol, board)
     @color = color
     @pos = pos
     @symbol = symbol
-  end
-
-  def update_board(board)
     @board = board
   end
 

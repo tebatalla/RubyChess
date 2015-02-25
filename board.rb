@@ -9,46 +9,52 @@ require_relative 'errors.rb'
 require 'byebug'
 
 class Board
+  def self.grid
+    Array.new(8) { Array.new(8) { nil } }
+  end
+
   def initialize(board = nil)
     if board.nil?
-      @board = grid
+      @board = self.class.grid
       initialize_board
     else
       @board = board
     end
   end
 
-  def grid
-    Array.new(8) { Array.new(8) { nil } }
-  end
-
   def move(start, end_pos)
     raise NoPieceAtPosition if self[start].nil?
+
     piece = self[start]
     if piece.moves.include?(end_pos)
       raise MoveIntoCheck if piece.move_into_check?(end_pos)
       piece.pos = end_pos
-      update_position_piece(end_pos, piece)
-      update_position_piece(start, nil)
-      update_pieces_board
+      self[end_pos] = piece
+      self[start] = nil
     else
       raise OccupiedSpace
     end
   end
 
   def each_piece(&prc)
-    @board.flatten.compact.each do |piece|
+    all_pieces.each do |piece|
       prc.call(piece)
     end
   end
 
+  def all_pieces
+    @board.flatten.compact
+  end
+
   def in_check?(color)
     king_position = []
+
     each_piece do |piece|
       if piece.is_a?(King) && piece.color == color
         king_position = piece.pos
       end
     end
+
     opponent_pieces(color).any? do |piece|
       piece.moves.include?(king_position)
     end
@@ -56,10 +62,7 @@ class Board
 
   def checkmate?(color)
     if in_check?(color)
-      pieces = []
-      each_piece do |piece|
-        pieces << piece if piece.color == color
-      end
+      pieces = all_pieces.select { |piece| piece.color == color }
       pieces.all? do |piece|
         piece.moves.all? do |move|
           piece.move_into_check?(move)
@@ -71,17 +74,20 @@ class Board
   end
 
   def display
-    puts "  a b c d e f g h"
+    puts "   a  b  c  d  e  f  g  h"
     i = 8
+    tile = true
     @board.each do |row|
       print "#{i} "
       row.each do |spot|
-        print spot ? spot.symbol + " " : "_ "
+        print (spot ? "\u2004" + spot.symbol.colorize(piece_color(spot.color)) + "\u2004" : "\u2004\u2003\u2004").colorize(tile_color(tile))
+        tile = !tile
       end
-      print "#{i}\n"
+      tile = !tile
+      print " #{i}\n"
       i -= 1
     end
-    puts "  a b c d e f g h"
+    puts "   a  b  c  d  e  f  g  h"
     nil
   end
 
@@ -90,52 +96,37 @@ class Board
     @board[row][col]
   end
 
-  def update_position_piece(pos, piece)
-    @board[pos[0]][pos[1]] = piece
+  def []=(pos, value)
+    row, col = pos
+    @board[row][col] = value
   end
 
   def inspect
   end
 
-  def row(i)
-    @board[i]
-  end
-
   def dup
-    board_dup = grid
+    board_dup = self.class.grid
+    duplicate = Board.new(board_dup)
     each_piece do |piece|
       board_dup[piece.pos[0]][piece.pos[1]] =
-      piece.class.new(piece.color, piece.pos.dup, piece.symbol)
+      piece.class.new(piece.color, piece.pos.dup, piece.symbol, duplicate)
     end
-    duplicate = Board.new(board_dup)
-    duplicate.update_pieces_board
     duplicate
   end
 
   def move!(start, end_pos)
     piece = self[start]
     piece.pos = end_pos
-    update_position_piece(end_pos, piece)
-    update_position_piece(start, nil)
-    update_pieces_board
+    self[end_pos] = piece
+    self[start] = nil
   end
 
   def opponent_piece?(pos, color)
     self[pos].color != color
   end
 
-  def update_pieces_board
-    each_piece do |piece|
-      piece.update_board(self)
-    end
-  end
-
   def opponent_pieces(color)
-    opp_pieces = []
-    each_piece do |piece|
-      opp_pieces << piece if piece.color != color
-    end
-    opp_pieces
+    all_pieces.select { |piece| piece.color != color }
   end
 
   private
@@ -147,48 +138,53 @@ class Board
     initialize_knights
     initialize_kings
     initialize_queens
-    update_pieces_board
   end
 
   def initialize_pawns
     @board[1].each_index do |i|
-      @board[1][i] = Pawn.new(:black, [1,i], "\u265F")
+      @board[1][i] = Pawn.new(:black, [1,i], "\u265F", self)
     end
     @board[6].each_index do |i|
-      @board[6][i] = Pawn.new(:white, [6,i], "\u2659")
+      @board[6][i] = Pawn.new(:white, [6,i], "\u265F", self)
     end
   end
 
   def initialize_rooks
-    @board[0][0] = Rook.new(:black, [0,0], "\u265C")
-    @board[0][7] = Rook.new(:black, [0,7], "\u265C")
-    @board[7][0] = Rook.new(:white, [7,0], "\u2656")
-    @board[7][7] = Rook.new(:white, [7,7], "\u2656")
+    @board[0][0] = Rook.new(:black, [0,0], "\u265C", self)
+    @board[0][7] = Rook.new(:black, [0,7], "\u265C", self)
+    @board[7][0] = Rook.new(:white, [7,0], "\u265C", self)
+    @board[7][7] = Rook.new(:white, [7,7], "\u265C", self)
   end
 
   def initialize_bishops
-    @board[0][2] = Bishop.new(:black, [0,2], "\u265D")
-    @board[0][5] = Bishop.new(:black, [0,5], "\u265D")
-    @board[7][2] = Bishop.new(:white, [7,2], "\u2657")
-    @board[7][5] = Bishop.new(:white, [7,5], "\u2657")
+    @board[0][2] = Bishop.new(:black, [0,2], "\u265D", self)
+    @board[0][5] = Bishop.new(:black, [0,5], "\u265D", self)
+    @board[7][2] = Bishop.new(:white, [7,2], "\u265D", self)
+    @board[7][5] = Bishop.new(:white, [7,5], "\u265D", self)
   end
 
   def initialize_knights
-    @board[0][1] = Knight.new(:black, [0,1], "\u265E")
-    @board[0][6] = Knight.new(:black, [0,6], "\u265E")
-    @board[7][1] = Knight.new(:white, [7,1], "\u2658")
-    @board[7][6] = Knight.new(:white, [7,6], "\u2658")
+    @board[0][1] = Knight.new(:black, [0,1], "\u265E", self)
+    @board[0][6] = Knight.new(:black, [0,6], "\u265E", self)
+    @board[7][1] = Knight.new(:white, [7,1], "\u265E", self)
+    @board[7][6] = Knight.new(:white, [7,6], "\u265E", self)
   end
 
   def initialize_kings
-    @board[0][4] = King.new(:black, [0,4], "\u265A")
-    @board[7][4] = King.new(:white, [7,4], "\u2654")
+    @board[0][4] = King.new(:black, [0,4], "\u265A", self)
+    @board[7][4] = King.new(:white, [7,4], "\u265A", self)
   end
 
   def initialize_queens
-    @board[0][3] = Queen.new(:black, [0,3], "\u265B")
-    @board[7][3] = Queen.new(:white, [7,3], "\u2655")
+    @board[0][3] = Queen.new(:black, [0,3], "\u265B", self)
+    @board[7][3] = Queen.new(:white, [7,3], "\u265B", self)
   end
 
+  def tile_color(toggle)
+    return { background: toggle ? :red : :blue }
+  end
 
+  def piece_color(color)
+    return { color: color == :black ? :black : :white }
+  end
 end

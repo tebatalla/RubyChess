@@ -31,6 +31,7 @@ class Game
       display_board
       user_in_check_message if user_in_check?
       begin
+        # move parsing logic into player class
         move = prompt_move(@current_player)
         parsed_move = parse_move(move)
         if @board[parsed_move.first] && @board[parsed_move.first].color != @current_player

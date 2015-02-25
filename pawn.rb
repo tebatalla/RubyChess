@@ -10,8 +10,8 @@ class Pawn < Piece
       possible_moves << possible_move
     end
 
-    if (@board.row(1).include?(self) && @color == :black) ||
-      (@board.row(6).include?(self) && @color == :white)
+    if (pos[0] == 1 && @color == :black) ||
+      (pos[0] == 6 && @color == :white)
       possible_move =[@pos[0].send(direction, 2), @pos[1]]
       unless end_of_board?(possible_move) || @board[possible_move]
         possible_moves << possible_move
@@ -34,10 +34,9 @@ class Pawn < Piece
   end
 
   def attacking_moves
-    moves = [
+    [
       [@pos[0].send(direction, 1), @pos[1] + 1],
       [@pos[0].send(direction, 1), @pos[1] - 1]
     ]
-    moves
   end
 end
