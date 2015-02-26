@@ -82,7 +82,7 @@ class Board
     @board.each do |row|
       print "#{i} "
       row.each do |spot|
-        print (spot ? "\u2004" + spot.symbol.colorize(piece_color(spot.color)) + "\u2004" : "\u2004\u2003\u2004").colorize(tile_color(tile))
+        print (spot ? " " + spot.symbol.colorize(piece_color(spot.color)) + " " : " \u2003 ").colorize(tile_color(tile))
         tile = !tile
       end
       tile = !tile
