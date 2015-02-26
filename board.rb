@@ -124,6 +124,7 @@ class Board
   end
 
   def opponent_piece?(pos, color)
+    return false if self[pos].nil?
     self[pos].color != color
   end
 
