@@ -8,6 +8,7 @@ class SlidingPiece < Piece
       possible_move = [@pos[0] + move_dir[0], @pos[1] + move_dir[1]]
       while valid_move?(possible_move)
         possible_moves << possible_move
+        break if @board.opponent_piece?(possible_move, @color)
         possible_move = [possible_move[0] + move_dir[0],
         possible_move[1] + move_dir[1]]
       end
