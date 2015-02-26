@@ -9,3 +9,6 @@ end
 
 class NotPlayersPiece < StandardError
 end
+
+class InvalidMove < StandardError
+end

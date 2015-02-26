@@ -47,6 +47,9 @@ class Game
       rescue MoveIntoCheck => e
         puts "That move puts you into check."
         retry
+      rescue InvalidMove => e
+        puts "That is an invalid move."
+        retry
       rescue NotPlayersPiece => e
         puts "That is not your piece."
         retry

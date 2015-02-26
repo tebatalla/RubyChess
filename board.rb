@@ -31,8 +31,10 @@ class Board
       piece.pos = end_pos
       self[end_pos] = piece
       self[start] = nil
-    else
+    elsif self[end_pos]
       raise OccupiedSpace
+    else
+      raise InvalidMove
     end
   end
 
