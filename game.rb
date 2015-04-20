@@ -72,3 +72,11 @@ class Game
     puts "#{@current_player.name}, you win!"
   end
 end
+
+if __FILE__ == $PROGRAM_NAME
+  player_one = Player.new(ARGV[0] || "Player 1")
+  player_two = Player.new(ARGV[1] || "Player 2")
+  ARGV.clear
+  game = Game.new player_one, player_two
+  game.play
+end
